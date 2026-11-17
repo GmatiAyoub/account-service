@@ -8,6 +8,7 @@ import tn.isetkebili.account.entity.AccountStatus;
 import tn.isetkebili.account.service.AccountService;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -39,11 +40,17 @@ public class AccountController {
         return service.findByCustomerId(customerId);
     }
 
-    // Utilisation de @RequestBody pour lire le statut depuis le JSON (et non @RequestMapping)
     @PatchMapping("/{id}/status")
     public Account updateStatus(@PathVariable Long id, @RequestBody AccountStatus status) {
         return service.updateStatus(id, status);
     }
+
+    // La nouvelle route pour approuver un compte
+    @PutMapping("/{id}/approve")
+    public Account approveAccount(@PathVariable Long id) {
+        return service.approveAccount(id);
+    }
+
     @PostMapping("/{id}/debit")
     public void debit(@PathVariable Long id, @RequestBody java.math.BigDecimal amount) {
         service.debit(id, amount);

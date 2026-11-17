@@ -21,7 +21,8 @@ public class AccountService {
         if (account.getBalance() == null || account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Le solde doit être positif ou nul");
         }
-        account.setStatus(AccountStatus.ACTIVE);
+        // Un nouveau compte est créé avec le statut PENDING
+        account.setStatus(AccountStatus.PENDING);
         return repository.save(account);
     }
 
@@ -41,6 +42,16 @@ public class AccountService {
     public Account updateStatus(Long id, AccountStatus status) {
         Account account = findById(id);
         account.setStatus(status);
+        return repository.save(account);
+    }
+
+    // Méthode pour approuver un compte
+    public Account approveAccount(Long id) {
+        Account account = findById(id);
+        if (account.getStatus() != AccountStatus.PENDING) {
+            throw new IllegalStateException("Seuls les comptes en attente peuvent être approuvés");
+        }
+        account.setStatus(AccountStatus.ACTIVE);
         return repository.save(account);
     }
 
